@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8b9d54d5363186a5fe75f9983992a4f623575672d1aafab934549ccd1e7b9feb
+-- hash: f2c8127ffc4f9377c236ecd2e01f240c2d9140d14090de3247f15139e1018bbe
 
 name:           netwire-sdl-test
 version:        0.1.0.0
@@ -38,6 +38,19 @@ executable challenge2
       Paths_netwire_sdl_test
   hs-source-dirs:
       src/c2
+  build-depends:
+      base >=4.7 && <5
+    , containers
+    , netwire
+    , sdl2
+  default-language: Haskell2010
+
+executable challenge3
+  main-is: Main.hs
+  other-modules:
+      Paths_netwire_sdl_test
+  hs-source-dirs:
+      src/c3
   build-depends:
       base >=4.7 && <5
     , containers

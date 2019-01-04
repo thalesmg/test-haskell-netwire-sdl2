@@ -24,3 +24,6 @@ executables:
   challenge2:
     source-dirs:      src/c2
     main:             Main.hs
+  challenge3:
+    source-dirs:      src/c3
+    main:             Main.hs
