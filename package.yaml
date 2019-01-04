@@ -1,0 +1,26 @@
+name:                netwire-sdl-test
+version:             0.1.0.0
+#synopsis:
+#description:
+homepage:            https://github.com/thalesmg/netwire-sdl-test#readme
+license:             BSD3
+author:              Thales Macedo Garitezi
+maintainer:          thalesmg@gmail.com
+copyright:           GPLv3
+category:            Web
+extra-source-files:
+- README.md
+
+dependencies:
+  - base >= 4.7 && < 5
+  - netwire
+  - sdl2
+  - containers
+
+executables:
+  challenge1:
+    source-dirs:      src/c1
+    main:             Main.hs
+  challenge2:
+    source-dirs:      src/c2
+    main:             Main.hs
