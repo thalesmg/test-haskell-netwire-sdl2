@@ -8,6 +8,7 @@ import Prelude hiding ((.), id)
 
 import qualified SDL as SDL
 import qualified Control.Monad as CM (when, unless)
+import Control.Concurrent (threadDelay)
 import Control.Monad.Fix (MonadFix)
 import Control.Wire
 import FRP.Netwire
@@ -17,16 +18,17 @@ import GHC.Stack
 type Vec = (Double, Double)
 
 baseAcc = 400
+dragConst = 3
 
-acceleration :: (HasTime t s, Monad m, Monoid e) => Wire s e m (S.Set SDL.Keycode) Vec
-acceleration = proc keysDown -> do
+acceleration :: (HasTime t s, Monad m, Monoid e) => Wire s e m (S.Set SDL.Keycode, Vec) Vec
+acceleration = proc (keysDown, ~(vx, vy)) -> do
   let xSign = if | S.member SDL.KeycodeRight keysDown -> 1
                  | S.member SDL.KeycodeLeft keysDown -> - 1
                  | otherwise -> 0
   let ySign = if | S.member SDL.KeycodeUp keysDown -> - 1
                  | S.member SDL.KeycodeDown keysDown -> 1
                  | otherwise -> 0
-  returnA -< (xSign * baseAcc, ySign * baseAcc)
+  returnA -< (xSign * baseAcc - vx / dragConst, ySign * baseAcc - vy / dragConst)
 
 reflectV :: HasTime t s => Wire s e m (Double, Bool) Double
 reflectV = integralWith (\collided a -> if collided then (- a) else a) 0
@@ -53,8 +55,8 @@ position = go (0, 0)
 
 challenge3 :: (HasTime t s, MonadFix m) => Wire s () m (S.Set SDL.Keycode) Vec
 challenge3 = proc keysDown -> do
-  (accelX, accelY) <- acceleration -< keysDown
-  rec (pos, (collX, collY)) <- position -< (velX, velY)
+  rec (accelX, accelY) <- acceleration -< (keysDown, (velX, velY))
+      (pos, (collX, collY)) <- position -< (velX, velY)
       -- vel <- velocity -< (accel, coll)
       velX <- reflectV -< (accelX, collX)
       velY <- reflectV -< (accelY, collY)
@@ -71,6 +73,7 @@ handleKey event ks =
     _ -> ks
 
 appLoop keysDown session wire renderer = do
+  threadDelay (2 * 10^4)
   (ds, session') <- stepSession session
   events <- SDL.pollEvents
   let qPressed = S.member SDL.KeycodeQ keysDown'
