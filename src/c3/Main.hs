@@ -18,7 +18,7 @@ import GHC.Stack
 type Vec = (Double, Double)
 
 baseAcc = 400
-dragConst = 3
+dragConst = 0.33
 
 acceleration :: (HasTime t s, Monad m, Monoid e) => Wire s e m (S.Set SDL.Keycode, Vec) Vec
 acceleration = proc (keysDown, ~(vx, vy)) -> do
@@ -28,7 +28,7 @@ acceleration = proc (keysDown, ~(vx, vy)) -> do
   let ySign = if | S.member SDL.KeycodeUp keysDown -> - 1
                  | S.member SDL.KeycodeDown keysDown -> 1
                  | otherwise -> 0
-  returnA -< (xSign * baseAcc - vx / dragConst, ySign * baseAcc - vy / dragConst)
+  returnA -< (xSign * baseAcc - vx * dragConst, ySign * baseAcc - vy * dragConst)
 
 reflectV :: HasTime t s => Wire s e m (Double, Bool) Double
 reflectV = integralWith (\collided a -> if collided then (- a) else a) 0
